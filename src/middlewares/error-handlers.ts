@@ -1,17 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
+import { RequestHandler, ErrorRequestHandler } from 'express';
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
+import { CustomError } from '../utils/errors';
+
+export const errorHandler: ErrorRequestHandler = (
+  error: CustomError,
+  req,
+  res,
+  next
 ) => {
-  const status = res.statusCode !== 200 ? res.statusCode : 500;
-  const message = err.message || 'Internal Server Error';
-
-  res.status(status).json({ message });
+  const status = error.status || 500;
+  const message = error.message || 'Internal Server Error';
+  res.status(status).json({ message: message });
 };
 
-export const notFound = (req: Request, res: Response, next: NextFunction) => {
+export const notFound: RequestHandler = (req, res) => {
   res.status(404).json({ message: 'Resource not found' });
 };
