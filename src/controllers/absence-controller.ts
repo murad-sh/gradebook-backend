@@ -1,15 +1,60 @@
-import { RequestHandler } from 'express';
+import { RequestHandler, Request } from 'express';
 
-import { getAbsences } from '../services/absence-service';
+import {
+  getAbsences,
+  addAbsence,
+  getStudentAbsencesByLesson,
+} from '../services/absence-service';
+import { AbsenceSchemaType } from '../schemas/absence';
+import { LessonDataParamsSchemaType } from '../schemas/helper';
 
 export const getAbsencesHandler: RequestHandler = async (req, res, next) => {
-  const userId = req.user.id;
+  const studentId = req.user.roleId;
 
   try {
-    const absences = await getAbsences(userId);
+    const absences = await getAbsences(studentId);
     res.status(200).json({
       message: 'Success',
       data: absences,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addAbsenceHandler: RequestHandler = async (
+  req: Request<{}, {}, AbsenceSchemaType>,
+  res,
+  next
+) => {
+  const teacherId = req.user.roleId;
+  const absenceData = req.body;
+
+  try {
+    const absence = await addAbsence(teacherId, absenceData);
+    res.status(201).json({
+      message: 'Absence added successfully',
+      data: { absence },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStudentAbsencesHandler: RequestHandler<
+  LessonDataParamsSchemaType
+> = async (req, res, next) => {
+  const teacherId = req.user.roleId;
+  const { lessonId, studentId } = req.params;
+  try {
+    const absences = await getStudentAbsencesByLesson(
+      teacherId,
+      lessonId,
+      studentId
+    );
+    res.status(200).json({
+      message: 'Success',
+      data: { absences },
     });
   } catch (error) {
     next(error);

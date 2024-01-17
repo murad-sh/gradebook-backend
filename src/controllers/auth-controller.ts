@@ -13,7 +13,11 @@ export const loginHandler: RequestHandler = async (
 
   try {
     const user = await authenticateUser(username, password);
-    const token = createToken({ id: user.id, role: user.role });
+    const token = createToken({
+      id: user.id,
+      role: user.role,
+      roleId: user.roleId,
+    });
     res.status(200).json({ message: 'Login successful', token, user });
   } catch (error) {
     next(error);

@@ -27,7 +27,7 @@ export const authenticateUser = async (username: string, password: string) => {
     username: user.username,
     name: user.name,
     surname: user.surname,
-    role,
+    ...role,
   };
 };
 
@@ -50,12 +50,18 @@ const getUserRole = (
     teacher: Teacher | null;
     student: Student | null;
   }
-): Role => {
+): { role: Role; roleId: string } => {
   if (user.teacher) {
-    return 'TEACHER';
+    return {
+      role: 'TEACHER',
+      roleId: user.teacher.id,
+    };
   }
   if (user.student) {
-    return 'STUDENT';
+    return {
+      role: 'STUDENT',
+      roleId: user.student.id,
+    };
   }
 
   throw new NotAuthorizedError('User does not have a valid role');

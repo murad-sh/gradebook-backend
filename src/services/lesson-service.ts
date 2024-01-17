@@ -1,26 +1,13 @@
 import { prisma } from '../utils/db-client';
 import { NotFoundError } from '../utils/errors';
 
-export const getStudentLessons = async (userId: string) => {
+export const getStudentLessons = async (studentId: string) => {
   const queryResult = await prisma.lesson.findMany({
     where: {
-      students: {
-        some: {
-          userId,
-        },
-      },
+      students: { some: { id: studentId } },
     },
     include: {
-      teacher: {
-        select: {
-          user: {
-            select: {
-              name: true,
-              surname: true,
-            },
-          },
-        },
-      },
+      teacher: { select: { user: { select: { name: true, surname: true } } } },
     },
   });
 
@@ -39,22 +26,22 @@ export const getStudentLessons = async (userId: string) => {
   return lessons;
 };
 
-export const getTeacherLessons = async (userId: string) => {
-  return await prisma.lesson.findMany({
+export const getTeacherLessons = (teacherId: string) => {
+  return prisma.lesson.findMany({
     where: {
       teacher: {
-        userId,
+        id: teacherId,
       },
     },
   });
 };
 
-export const getLesson = async (userId: string, lessonId: string) => {
+export const getLesson = async (teacherId: string, lessonId: string) => {
   const lesson = await prisma.lesson.findUnique({
     where: {
       id: lessonId,
       teacher: {
-        userId,
+        id: teacherId,
       },
     },
     include: {

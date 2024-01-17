@@ -1,22 +1,15 @@
+import { GradeSchemaType } from '../schemas/grade';
 import { prisma } from '../utils/db-client';
 
-export const getGrades = async (userId: string) => {
+export const getGrades = async (studentId: string) => {
   const queryResult = await prisma.grade.findMany({
-    where: {
-      student: {
-        userId,
-      },
-    },
+    where: { student: { id: studentId } },
     select: {
       id: true,
       score: true,
       assessmentDate: true,
       comment: true,
-      lesson: {
-        select: {
-          subject: true,
-        },
-      },
+      lesson: { select: { subject: true } },
       teacher: {
         select: {
           user: {
@@ -42,4 +35,32 @@ export const getGrades = async (userId: string) => {
     };
   });
   return grades;
+};
+
+export const addGrade = async (
+  teacherId: string,
+  gradeData: GradeSchemaType
+) => {
+  const grade = await prisma.grade.create({
+    data: {
+      ...gradeData,
+      teacherId,
+    },
+  });
+
+  return grade;
+};
+
+export const getStudentGradesByLesson = (
+  teacherId: string,
+  lessonId: string,
+  studentId: string
+) => {
+  return prisma.grade.findMany({
+    where: {
+      teacherId,
+      lessonId,
+      studentId,
+    },
+  });
 };

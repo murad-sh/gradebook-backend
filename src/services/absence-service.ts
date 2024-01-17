@@ -1,11 +1,10 @@
 import { prisma } from '../utils/db-client';
+import { AbsenceSchemaType } from '../schemas/absence';
 
-export const getAbsences = async (userId: string) => {
+export const getAbsences = async (studentId: string) => {
   const queryResult = await prisma.absence.findMany({
     where: {
-      student: {
-        userId,
-      },
+      studentId,
     },
     select: {
       id: true,
@@ -42,4 +41,32 @@ export const getAbsences = async (userId: string) => {
   });
 
   return absences;
+};
+
+export const addAbsence = async (
+  teacherId: string,
+  absenceData: AbsenceSchemaType
+) => {
+  const absence = await prisma.absence.create({
+    data: {
+      ...absenceData,
+      teacherId,
+    },
+  });
+
+  return absence;
+};
+
+export const getStudentAbsencesByLesson = (
+  teacherId: string,
+  lessonId: string,
+  studentId: string
+) => {
+  return prisma.absence.findMany({
+    where: {
+      teacherId,
+      lessonId,
+      studentId,
+    },
+  });
 };

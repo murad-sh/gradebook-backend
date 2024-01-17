@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { AnyZodObject } from 'zod';
+import { AnyZodObject, ZodSchema } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 
 import {
@@ -12,11 +12,7 @@ import { Role } from '../types/token-payload';
 
 export const validateRequest = (schema: AnyZodObject): RequestHandler => {
   return (req, res, next) => {
-    const parsed = schema.safeParse({
-      body: req.body,
-      params: req.params,
-      query: req.query,
-    });
+    const parsed = schema.safeParse(req.body);
 
     if (!parsed.success) {
       const errorMessage = fromZodError(parsed.error).message;
@@ -56,6 +52,19 @@ export const requireAuthRole = (allowedRoles: Role[]): RequestHandler => {
 
     if (!allowedRoles.includes(req.user.role)) {
       return next(new NotAuthorizedError('Not authorized'));
+    }
+
+    next();
+  };
+};
+
+export const validateParams = (schema: ZodSchema): RequestHandler => {
+  return (req, res, next) => {
+    const parsed = schema.safeParse(req.params);
+
+    if (!parsed.success) {
+      const errorMessage = fromZodError(parsed.error).message;
+      return next(new ValidationError(errorMessage));
     }
 
     next();
