@@ -8,7 +8,7 @@ import {
   ValidationError,
 } from '../utils/errors';
 import { verifyToken } from '../utils/jwt';
-import { Role } from '@prisma/client';
+import { Role } from '../types/token-payload';
 
 export const validateRequest = (schema: AnyZodObject): RequestHandler => {
   return (req, res, next) => {

@@ -13,6 +13,6 @@ export const errorHandler: ErrorRequestHandler = (
   res.status(status).json({ message: message });
 };
 
-export const notFound: RequestHandler = (req, res) => {
+export const notFoundHandler: RequestHandler = (req, res) => {
   res.status(404).json({ message: 'Resource not found' });
 };

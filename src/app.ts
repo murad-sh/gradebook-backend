@@ -5,7 +5,7 @@ import helmet from 'helmet';
 
 import { corsOptions } from './config/cors-options';
 import router from './routes/index';
-import { errorHandler, notFound } from './middlewares/error-handlers';
+import { errorHandler, notFoundHandler } from './middlewares/error-handlers';
 
 dotenv.config();
 const port = process.env.PORT || 8080;
@@ -16,7 +16,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api', router);
-app.use(notFound);
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen('8080', () => {
