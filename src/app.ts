@@ -19,6 +19,6 @@ app.use('/api', router);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen('8080', () => {
+app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
