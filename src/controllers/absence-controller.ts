@@ -4,6 +4,7 @@ import {
   getAbsences,
   addAbsence,
   getStudentAbsencesByLesson,
+  deleteAbsence,
 } from '../services/absence-service';
 import { AbsenceSchemaType } from '../schemas/absence';
 import { LessonDataParamsSchemaType } from '../schemas/helper';
@@ -15,7 +16,7 @@ export const getAbsencesHandler: RequestHandler = async (req, res, next) => {
     const absences = await getAbsences(studentId);
     res.status(200).json({
       message: 'Success',
-      data: absences,
+      data: { absences },
     });
   } catch (error) {
     next(error);
@@ -56,6 +57,20 @@ export const getStudentAbsencesHandler: RequestHandler<
       message: 'Success',
       data: { absences },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAbsenceHandler: RequestHandler<{
+  absenceId: string;
+}> = async (req, res, next) => {
+  const teacherId = req.user.roleId;
+  const { absenceId } = req.params;
+
+  try {
+    await deleteAbsence(teacherId, absenceId);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }

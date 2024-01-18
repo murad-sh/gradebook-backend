@@ -9,3 +9,7 @@ export const absenceSchema = z.object({
 });
 
 export type AbsenceSchemaType = z.infer<typeof absenceSchema>;
+
+export const absenceIdSchema = z.object({
+  absenceId: objectId,
+});

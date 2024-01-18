@@ -11,3 +11,15 @@ export const gradeSchema = z.object({
 });
 
 export type GradeSchemaType = z.infer<typeof gradeSchema>;
+
+export const gradeUpdateSchema = z.object({
+  score: z.number(),
+  comment: z.string(),
+  assessmentDate: objectDate,
+});
+
+export type GradeUpdateSchemaType = z.infer<typeof gradeUpdateSchema>;
+
+export const gradeIdSchema = z.object({
+  gradeId: objectId,
+});

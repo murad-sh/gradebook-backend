@@ -4,8 +4,10 @@ import {
   addGrade,
   getGrades,
   getStudentGradesByLesson,
+  updateGrade,
+  deleteGrade,
 } from '../services/grade-service';
-import { GradeSchemaType } from '../schemas/grade';
+import { GradeSchemaType, GradeUpdateSchemaType } from '../schemas/grade';
 import { LessonDataParamsSchemaType } from '../schemas/helper';
 
 export const getGradesHandler: RequestHandler = async (req, res, next) => {
@@ -57,6 +59,42 @@ export const getStudentGradesHandler: RequestHandler<
     res.status(200).json({
       message: 'Success',
       data: { grades },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteGradeHandler: RequestHandler<{ gradeId: string }> = async (
+  req,
+  res,
+  next
+) => {
+  const teacherId = req.user.roleId;
+  const { gradeId } = req.params;
+
+  try {
+    await deleteGrade(teacherId, gradeId);
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateGradeHandler: RequestHandler<
+  { gradeId: string },
+  {},
+  GradeUpdateSchemaType
+> = async (req, res, next) => {
+  const teacherId = req.user.roleId;
+  const { gradeId } = req.params;
+  const gradeDetails = req.body;
+
+  try {
+    const updatedGrade = await updateGrade(teacherId, gradeId, gradeDetails);
+    res.status(200).json({
+      message: 'Grade updated successfully',
+      data: { grade: updatedGrade },
     });
   } catch (error) {
     next(error);

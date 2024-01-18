@@ -32,7 +32,7 @@ export const getAbsences = async (studentId: string) => {
 
     return {
       ...absenceDetails,
-      lesson: lesson.subject,
+      subject: lesson.subject,
       teacher: {
         name: teacher.user.name,
         surname: teacher.user.surname,
@@ -67,6 +67,15 @@ export const getStudentAbsencesByLesson = (
       teacherId,
       lessonId,
       studentId,
+    },
+  });
+};
+
+export const deleteAbsence = (teacherId: string, absenceId: string) => {
+  return prisma.absence.delete({
+    where: {
+      id: absenceId,
+      teacherId,
     },
   });
 };

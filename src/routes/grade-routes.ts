@@ -5,9 +5,15 @@ import {
   getGradesHandler,
   addGradeHandler,
   getStudentGradesHandler,
+  updateGradeHandler,
+  deleteGradeHandler,
 } from '../controllers/grade-controller';
 import { validateRequest } from '../middlewares/validations';
-import { gradeSchema } from '../schemas/grade';
+import {
+  gradeIdSchema,
+  gradeSchema,
+  gradeUpdateSchema,
+} from '../schemas/grade';
 import { lessonDataParamsSchema } from '../schemas/helper';
 
 const gradeRoutes = Router();
@@ -22,6 +28,21 @@ gradeRoutes.get(
   '/:lessonId/:studentId',
   [requireAuthRole(['TEACHER']), validateParams(lessonDataParamsSchema)],
   getStudentGradesHandler
+);
+
+gradeRoutes.patch(
+  '/:gradeId',
+  [
+    requireAuthRole(['TEACHER']),
+    validateRequest(gradeUpdateSchema),
+    validateParams(gradeIdSchema),
+  ],
+  updateGradeHandler
+);
+gradeRoutes.delete(
+  '/:gradeId',
+  [requireAuthRole(['TEACHER']), validateParams(gradeIdSchema)],
+  deleteGradeHandler
 );
 
 export default gradeRoutes;

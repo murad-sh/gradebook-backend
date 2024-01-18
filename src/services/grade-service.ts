@@ -1,4 +1,4 @@
-import { GradeSchemaType } from '../schemas/grade';
+import { GradeSchemaType, GradeUpdateSchemaType } from '../schemas/grade';
 import { prisma } from '../utils/db-client';
 
 export const getGrades = async (studentId: string) => {
@@ -61,6 +61,33 @@ export const getStudentGradesByLesson = (
       teacherId,
       lessonId,
       studentId,
+    },
+  });
+};
+
+export const updateGrade = async (
+  teacherId: string,
+  gradeId: string,
+  gradeData: GradeUpdateSchemaType
+) => {
+  const grade = await prisma.grade.update({
+    where: {
+      id: gradeId,
+      teacherId,
+    },
+    data: {
+      ...gradeData,
+    },
+  });
+
+  return grade;
+};
+
+export const deleteGrade = (teacherId: string, gradeId: string) => {
+  return prisma.grade.delete({
+    where: {
+      id: gradeId,
+      teacherId,
     },
   });
 };
